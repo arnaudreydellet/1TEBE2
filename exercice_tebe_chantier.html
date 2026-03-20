@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercice – Conducteur de Travaux · 1ère TEBE</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1f2435;
+    --border: #2c3350;
+    --accent: #f5a623;
+    --accent2: #4fc3f7;
+    --green: #4caf82;
+    --red: #e05c6a;
+    --text: #e8eaf2;
+    --muted: #7a84a8;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 22px 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-icon {
+    width: 44px; height: 44px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .header-titles h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: .03em;
+  }
+  .header-titles p {
+    font-size: .78rem;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .header-badge {
+    margin-left: auto;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    color: var(--accent2);
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 860px;
+    margin: 36px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ── ÉNONCÉ CARD ── */
+  .enonce-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+  }
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .enonce-text {
+    font-size: .97rem;
+    line-height: 1.75;
+    color: #c8ccde;
+  }
+  .enonce-text strong { color: var(--text); }
+
+  /* ── PLAN CHANTIER ── */
+  .plan-wrapper {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    overflow: auto;
+  }
+  svg.plan { display: block; margin: 0 auto; max-width: 100%; }
+
+  /* ── QUESTIONS ── */
+  .partie-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    padding: 0 0 4px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    transition: border-color .2s;
+  }
+  .question-card.answered { border-color: var(--accent2); }
+  .question-card.correct  { border-color: var(--green); }
+  .question-card.wrong    { border-color: var(--red); }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .q-num {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-text { font-size: .95rem; line-height: 1.6; }
+  .q-hint {
+    font-size: .8rem;
+    color: var(--muted);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* numeric input */
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+  input[type="number"] {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 8px 14px;
+    width: 140px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  input[type="number"]:focus { border-color: var(--accent2); }
+  input[type="number"]:disabled { opacity: .6; }
+  .unit-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .85rem;
+    color: var(--muted);
+  }
+
+  /* QCM */
+  .qcm-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .qcm-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    user-select: none;
+  }
+  .qcm-opt:hover:not(.locked) { border-color: var(--accent2); background: #232840; }
+  .qcm-opt.selected { border-color: var(--accent2); background: #1a2540; }
+  .qcm-opt.locked { cursor: default; }
+  .qcm-opt.opt-correct { border-color: var(--green) !important; background: #17332a !important; }
+  .qcm-opt.opt-wrong   { border-color: var(--red) !important; background: #31181e !important; }
+  .opt-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: .8rem;
+    color: var(--accent);
+    min-width: 20px;
+  }
+  .opt-text { font-size: .9rem; }
+
+  /* feedback */
+  .feedback {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: .88rem;
+    line-height: 1.5;
+  }
+  .feedback.correct { background: #17332a; border: 1px solid var(--green); color: #8fe0b8; display: block; }
+  .feedback.wrong   { background: #31181e; border: 1px solid var(--red);   color: #f08c96; display: block; }
+
+  /* ── BOUTONS ── */
+  .btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+    letter-spacing: .04em;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-check {
+    background: var(--accent2);
+    color: #0d1117;
+    margin-top: 14px;
+  }
+  .btn-check:disabled { opacity: .4; cursor: default; }
+  .btn-submit-all {
+    background: var(--accent);
+    color: #0d1117;
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+
+  /* ── SCORE ── */
+  .score-card {
+    display: none;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+  }
+  .score-card.visible { display: block; }
+  .score-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-sub {
+    color: var(--muted);
+    margin-top: 8px;
+    font-size: .9rem;
+  }
+  .score-msg {
+    margin-top: 18px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  /* tolerances note */
+  .tolerance-note {
+    background: var(--surface2);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-icon">🏗️</div>
+  <div class="header-titles">
+    <h1>Chantier Les Pins — Conducteur de Travaux</h1>
+    <p>Mathématiques appliquées · 1ère TEBE · Métrés &amp; calculs de chantier</p>
+  </div>
+  <div class="header-badge" id="progressBadge">0 / 10</div>
+</header>
+
+<div class="container">
+
+  <!-- ÉNONCÉ -->
+  <div class="enonce-card">
+    <div class="section-label">📋 Mise en situation</div>
+    <div class="enonce-text">
+      Vous êtes <strong>conducteur de travaux</strong> sur le chantier « Les Pins », une maison individuelle en cours de construction à Saint-Étienne. Vous devez fournir des quantités précises à vos sous-traitants et vérifier les calculs du bureau d'études.<br><br>
+      Le bâtiment est de forme rectangulaire : <strong>12,00 m de long</strong> et <strong>9,00 m de large</strong>. La hauteur sous plafond est de <strong>2,50 m</strong> au rez-de-chaussée. La maison comporte un <strong>garage accolé</strong> de <strong>6,00 m × 5,50 m</strong> (non chauffé). La toiture est à <strong>deux versants</strong> symétriques ; le faîtage se trouve à <strong>3,20 m</strong> au-dessus du niveau de la sablière (bas du toit).<br><br>
+      Les ouvertures du rez-de-chaussée sont : <strong>3 fenêtres</strong> de 1,20 m × 1,10 m, <strong>2 baies vitrées</strong> de 2,10 m × 2,20 m et <strong>1 porte d'entrée</strong> de 0,90 m × 2,10 m. Le revêtement sol prévu est du carrelage 60×60 cm (pose en quinconce, +10 % de chutes).
+    </div>
+  </div>
+
+  <!-- PLAN SVG -->
+  <div class="plan-wrapper">
+    <div class="section-label" style="margin-bottom:10px;">📐 Plan de masse simplifié (vue de dessus)</div>
+    <svg class="plan" viewBox="0 0 520 260" xmlns="http://www.w3.org/2000/svg" style="font-family:'DM Mono',monospace;">
+      <!-- fond -->
+      <rect width="520" height="260" fill="#181c27"/>
+      <!-- maison principale -->
+      <rect x="80" y="40" width="240" height="180" fill="#1f2435" stroke="#4fc3f7" stroke-width="2"/>
+      <!-- garage -->
+      <rect x="320" y="80" width="110" height="100" fill="#1a1e2e" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <!-- fenêtres -->
+      <rect x="110" y="38" width="30" height="5" fill="#4fc3f7" opacity=".7"/>
+      <rect x="180" y="38" width="30" height="5" fill="#4fc3f7" opacity=".7"/>
+      <rect x="250" y="38" width="30" height="5" fill="#4fc3f7" opacity=".7"/>
+      <!-- baies -->
+      <rect x="78" y="80" width="5" height="50" fill="#a5d8f5" opacity=".8"/>
+      <rect x="78" y="150" width="5" height="50" fill="#a5d8f5" opacity=".8"/>
+      <!-- porte -->
+      <rect x="175" y="218" width="22" height="5" fill="#f5a623" opacity=".9"/>
+      <!-- cotes maison -->
+      <line x1="80" y1="230" x2="320" y2="230" stroke="#4fc3f7" stroke-width="1" marker-end="url(#arr)" marker-start="url(#arr)"/>
+      <text x="200" y="245" fill="#4fc3f7" font-size="11" text-anchor="middle">12,00 m</text>
+      <line x1="60" y1="40" x2="60" y2="220" stroke="#4fc3f7" stroke-width="1" marker-end="url(#arr)" marker-start="url(#arr)"/>
+      <text x="35" y="132" fill="#4fc3f7" font-size="11" text-anchor="middle">9,00 m</text>
+      <!-- cotes garage -->
+      <line x1="320" y1="192" x2="430" y2="192" stroke="#f5a623" stroke-width="1" marker-end="url(#arr2)" marker-start="url(#arr2)"/>
+      <text x="375" y="207" fill="#f5a623" font-size="10" text-anchor="middle">6,00 m</text>
+      <line x1="446" y1="80" x2="446" y2="180" stroke="#f5a623" stroke-width="1" marker-end="url(#arr2)" marker-start="url(#arr2)"/>
+      <text x="470" y="133" fill="#f5a623" font-size="10" text-anchor="middle">5,50 m</text>
+      <!-- labels -->
+      <text x="200" y="135" fill="#7a84a8" font-size="13" text-anchor="middle">Maison</text>
+      <text x="375" y="135" fill="#b08040" font-size="11" text-anchor="middle">Garage</text>
+      <!-- flèche nord -->
+      <text x="490" y="25" fill="#7a84a8" font-size="18" text-anchor="middle">↑</text>
+      <text x="490" y="40" fill="#7a84a8" font-size="10" text-anchor="middle">N</text>
+      <!-- markers -->
+      <defs>
+        <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#4fc3f7"/>
+        </marker>
+        <marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#f5a623"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- NOTE TOLÉRANCE -->
+  <div class="tolerance-note">
+    ⚠️ Tolérance acceptée : ±2 % sur les valeurs numériques (arrondis). Saisir uniquement des chiffres, virgule ou point décimal acceptés.
+  </div>
+
+  <!-- ══ PARTIE A ══ -->
+  <div class="partie-title">Partie A — Surfaces et volumes</div>
+
+  <!-- Q1 -->
+  <div class="question-card" id="card-q1">
+    <div class="q-header">
+      <div class="q-num">1</div>
+      <div>
+        <div class="q-text">Calculez la <strong>surface habitable</strong> du rez-de-chaussée (maison seule, sans le garage). Donnez votre réponse en m².</div>
+        <div class="q-hint">Rappel : surface = longueur × largeur</div>
+      </div>
+    </div>
+    <div class="input-row">
+      <input type="number" id="ans-q1" step="0.01" placeholder="0.00">
+      <span class="unit-label">m²</span>
+    </div>
+    <button class="btn btn-check" onclick="checkNumeric('q1', 108, 2)">Vérifier</button>
+    <div class="feedback" id="fb-q1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-card" id="card-q2">
+    <div class="q-header">
+      <div class="q-num">2</div>
+      <div>
+        <div class="q-text">Calculez le <strong>volume d'air</strong> du rez-de-chaussée (maison seule) en m³. La hauteur sous plafond est de 2,50 m.</div>
+      </div>
+    </div>
+    <div class="input-row">
+      <input type="number" id="ans-q2" step="0.01" placeholder="0.00">
+      <span class="unit-label">m³</span>
+    </div>
+    <button class="btn btn-check" onclick="checkNumeric('q2', 270, 2)">Vérifier</button>
+    <div class="feedback" id="fb-q2"></div>
+  </div>
+
+  <!-- Q3 QCM -->
+  <div class="question-card" id="card-q3">
+    <div class="q-header">
+      <div class="q-num">3</div>
+      <div>
+        <div class="q-text">L'entreprise de <strong>carrelage</strong> doit poser du carrelage 60×60 cm sur l'ensemble du rez-de-chaussée (maison + garage). En posant en quinconce, il faut prévoir <strong>+10 % de chutes</strong>. Quel est le nombre de carreaux à commander ? <em>(Arrondir à l'unité supérieure.)</em></div>
+        <div class="q-hint">Pensez à inclure la surface du garage dans le total.</div>
+      </div>
+    </div>
+    <div class="qcm-options" id="opts-q3">
+      <!-- Bonne réponse calculée :
+           Surface totale = 12×9 + 6×5,5 = 108 + 33 = 141 m²
+           Avec 10% chutes : 141 × 1,10 = 155,1 m²
+           Carreau = 0,60×0,60 = 0,36 m²
+           Nb = 155,1 / 0,36 = 430,83 → 431 carreaux
+           Pièges : oublier le garage (108×1,1/0,36=330), oublier les chutes (141/0,36=392), mauvaise dimension carreau
+      -->
+      <div class="qcm-opt" onclick="selectOpt('q3','A')" id="q3-A"><span class="opt-letter">A</span><span class="opt-text">330 carreaux (maison seule avec chutes)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q3','B')" id="q3-B"><span class="opt-letter">B</span><span class="opt-text">392 carreaux (maison + garage sans les chutes)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q3','C')" id="q3-C"><span class="opt-letter">C</span><span class="opt-text">431 carreaux (maison + garage avec 10 % de chutes)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q3','D')" id="q3-D"><span class="opt-letter">D</span><span class="opt-text">385 carreaux (surface totale divisée par la diagonale du carreau)</span></div>
+    </div>
+    <button class="btn btn-check" onclick="checkQCM('q3','C')" id="btn-q3">Vérifier</button>
+    <div class="feedback" id="fb-q3"></div>
+  </div>
+
+  <!-- ══ PARTIE B ══ -->
+  <div class="partie-title">Partie B — Murs et ouvertures</div>
+
+  <!-- Q4 -->
+  <div class="question-card" id="card-q4">
+    <div class="q-header">
+      <div class="q-num">4</div>
+      <div>
+        <div class="q-text">Calculez la <strong>surface brute</strong> des 4 murs extérieurs du rez-de-chaussée (maison seule, hauteur 2,50 m), sans déduire les ouvertures. Donnez votre réponse en m².</div>
+        <div class="q-hint">Périmètre × hauteur</div>
+      </div>
+    </div>
+    <div class="input-row">
+      <input type="number" id="ans-q4" step="0.01" placeholder="0.00">
+      <span class="unit-label">m²</span>
+    </div>
+    <button class="btn btn-check" onclick="checkNumeric('q4', 105, 2)">Vérifier</button>
+    <div class="feedback" id="fb-q4"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-card" id="card-q5">
+    <div class="q-header">
+      <div class="q-num">5</div>
+      <div>
+        <div class="q-text">Calculez la <strong>surface totale des ouvertures</strong> (3 fenêtres + 2 baies vitrées + 1 porte d'entrée). Donnez votre réponse en m².</div>
+      </div>
+    </div>
+    <div class="input-row">
+      <input type="number" id="ans-q5" step="0.01" placeholder="0.00">
+      <span class="unit-label">m²</span>
+    </div>
+    <!-- 3×(1,20×1,10) + 2×(2,10×2,20) + 1×(0,90×2,10) = 3,96 + 9,24 + 1,89 = 15,09 -->
+    <button class="btn btn-check" onclick="checkNumeric('q5', 15.09, 2)">Vérifier</button>
+    <div class="feedback" id="fb-q5"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="question-card" id="card-q6">
+    <div class="q-header">
+      <div class="q-num">6</div>
+      <div>
+        <div class="q-text">Calculez la <strong>surface nette</strong> des murs (surface brute – surface des ouvertures). C'est la surface à enduire. Donnez votre réponse en m².</div>
+      </div>
+    </div>
+    <div class="input-row">
+      <input type="number" id="ans-q6" step="0.01" placeholder="0.00">
+      <span class="unit-label">m²</span>
+    </div>
+    <!-- 105 - 15,09 = 89,91 -->
+    <button class="btn btn-check" onclick="checkNumeric('q6', 89.91, 2)">Vérifier</button>
+    <div class="feedback" id="fb-q6"></div>
+  </div>
+
+  <!-- ══ PARTIE C ══ -->
+  <div class="partie-title">Partie C — Toiture</div>
+
+  <!-- Q7 -->
+  <div class="question-card" id="card-q7">
+    <div class="q-header">
+      <div class="q-num">7</div>
+      <div>
+        <div class="q-text">La toiture est à deux versants. La largeur totale de la maison est 9,00 m, le faîtage est centré. Calculez la <strong>longueur (en plan) de la demi-largeur</strong>, c'est-à-dire la distance horizontale du bas du toit jusqu'au faîtage. Donnez votre réponse en m.</div>
+        <div class="q-hint">Le faîtage est au milieu de la largeur.</div>
+      </div>
+    </div>
+    <div class="input-row">
+      <input type="number" id="ans-q7" step="0.01" placeholder="0.00">
+      <span class="unit-label">m</span>
+    </div>
+    <!-- 9/2 = 4,50 -->
+    <button class="btn btn-check" onclick="checkNumeric('q7', 4.5, 2)">Vérifier</button>
+    <div class="feedback" id="fb-q7"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="question-card" id="card-q8">
+    <div class="q-header">
+      <div class="q-num">8</div>
+      <div>
+        <div class="q-text">En utilisant le théorème de Pythagore, calculez la <strong>longueur réelle d'un versant</strong> (rampant) de la toiture. La hauteur est 3,20 m, la demi-largeur en plan est le résultat de la question 7. Donnez votre réponse en m (arrondir à 2 décimales).</div>
+        <div class="q-hint">Rampant² = hauteur² + demi-largeur²</div>
+      </div>
+    </div>
+    <div class="input-row">
+      <input type="number" id="ans-q8" step="0.01" placeholder="0.00">
+      <span class="unit-label">m</span>
+    </div>
+    <!-- √(3,20² + 4,50²) = √(10,24 + 20,25) = √30,49 ≈ 5,52 -->
+    <button class="btn btn-check" onclick="checkNumeric('q8', 5.52, 2)">Vérifier</button>
+    <div class="feedback" id="fb-q8"></div>
+  </div>
+
+  <!-- Q9 QCM -->
+  <div class="question-card" id="card-q9">
+    <div class="q-header">
+      <div class="q-num">9</div>
+      <div>
+        <div class="q-text">Quelle est la <strong>pente du toit</strong> exprimée en pourcentage ? La pente en % est calculée par : <em>(hauteur / demi-largeur en plan) × 100</em>.</div>
+        <div class="q-hint">Ne pas confondre pente en % et angle en degrés.</div>
+      </div>
+    </div>
+    <!--
+      Pente = 3,20 / 4,50 × 100 ≈ 71,1 %
+      Pièges : angle = arctan(3,2/4,5) ≈ 35°, rampant/largeur totale = 5,52/9 = 61,3%, hauteur/rampant = 58%
+    -->
+    <div class="qcm-options" id="opts-q9">
+      <div class="qcm-opt" onclick="selectOpt('q9','A')" id="q9-A"><span class="opt-letter">A</span><span class="opt-text">35 % (confusion avec l'angle en degrés)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q9','B')" id="q9-B"><span class="opt-letter">B</span><span class="opt-text">58 % (rapport hauteur / longueur du rampant)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q9','C')" id="q9-C"><span class="opt-letter">C</span><span class="opt-text">61 % (rapport rampant / largeur totale de la maison)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q9','D')" id="q9-D"><span class="opt-letter">D</span><span class="opt-text">71,1 % (rapport hauteur / demi-largeur en plan, multiplié par 100)</span></div>
+    </div>
+    <button class="btn btn-check" onclick="checkQCM('q9','D')" id="btn-q9">Vérifier</button>
+    <div class="feedback" id="fb-q9"></div>
+  </div>
+
+  <!-- Q10 QCM -->
+  <div class="question-card" id="card-q10">
+    <div class="q-header">
+      <div class="q-num">10</div>
+      <div>
+        <div class="q-text">La <strong>surface totale de couverture</strong> (les deux versants) est calculée par : <em>2 × longueur de la maison × longueur du rampant</em>. Quelle est la valeur correcte, en m² ?</div>
+      </div>
+    </div>
+    <!--
+      2 × 12 × 5,52 = 132,48 m²
+      Pièges : 2×12×4,5 = 108 (demi-largeur à la place du rampant), 12×9 = 108 (surface plancher), 2×12×3,2 = 76,8 (hauteur à la place du rampant)
+    -->
+    <div class="qcm-options" id="opts-q10">
+      <div class="qcm-opt" onclick="selectOpt('q10','A')" id="q10-A"><span class="opt-letter">A</span><span class="opt-text">76,8 m² (utilisation de la hauteur à la place du rampant)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q10','B')" id="q10-B"><span class="opt-letter">B</span><span class="opt-text">108 m² (utilisation de la demi-largeur en plan à la place du rampant)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q10','C')" id="q10-C"><span class="opt-letter">C</span><span class="opt-text">132,5 m² (calcul correct avec la longueur réelle du rampant)</span></div>
+      <div class="qcm-opt" onclick="selectOpt('q10','D')" id="q10-D"><span class="opt-letter">D</span><span class="opt-text">118 m² (oubli du facteur 2 pour les deux versants)</span></div>
+    </div>
+    <button class="btn btn-check" onclick="checkQCM('q10','C')" id="btn-q10">Vérifier</button>
+    <div class="feedback" id="fb-q10"></div>
+  </div>
+
+  <!-- BOUTON SCORE FINAL -->
+  <button class="btn btn-submit-all" onclick="showScore()">📊 Voir mon score final</button>
+
+  <!-- SCORE CARD -->
+  <div class="score-card" id="scoreCard">
+    <div class="score-big" id="scoreBig">—</div>
+    <div class="score-sub">questions correctes sur 10</div>
+    <div class="score-msg" id="scoreMsg"></div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ── STATE ──
+const state = {};
+const qcmSelected = {};
+const TOTAL = 10;
+
+function normalizeAnswer(val) {
+  return parseFloat(String(val).replace(',', '.'));
+}
+
+function updateBadge() {
+  const count = Object.values(state).filter(v => v === true).length;
+  document.getElementById('progressBadge').textContent = count + ' / ' + TOTAL;
+}
+
+// ── NUMERIC CHECK ──
+function checkNumeric(qid, correct, tolPct) {
+  const input = document.getElementById('ans-' + qid);
+  const val = normalizeAnswer(input.value);
+  if (isNaN(val)) {
+    showFeedback(qid, false, '⚠️ Saisir une valeur numérique.');
+    return;
+  }
+  const tol = (tolPct / 100) * correct;
+  const ok = Math.abs(val - correct) <= tol;
+  state[qid] = ok;
+  input.disabled = true;
+  document.getElementById('card-' + qid).classList.add(ok ? 'correct' : 'wrong');
+  const btn = document.querySelector('#card-' + qid + ' .btn-check');
+  btn.disabled = true;
+
+  const msgs = {
+    'q1': `✅ Correct ! Surface = 12 × 9 = <strong>108 m²</strong>.`,
+    'q2': `✅ Correct ! Volume = 108 × 2,50 = <strong>270 m³</strong>.`,
+    'q4': `✅ Correct ! Périmètre = 2×(12+9) = 42 m → Surface = 42 × 2,50 = <strong>105 m²</strong>.`,
+    'q5': `✅ Correct ! 3×(1,20×1,10) + 2×(2,10×2,20) + 0,90×2,10 = 3,96 + 9,24 + 1,89 = <strong>15,09 m²</strong>.`,
+    'q6': `✅ Correct ! Surface nette = 105 − 15,09 = <strong>89,91 m²</strong>.`,
+    'q7': `✅ Correct ! Demi-largeur = 9 / 2 = <strong>4,50 m</strong>.`,
+    'q8': `✅ Correct ! Rampant = √(3,20² + 4,50²) = √30,49 ≈ <strong>5,52 m</strong>.`,
+  };
+  const wrongs = {
+    'q1': `❌ Revoir la formule. Surface = longueur × largeur = 12 × 9 = <strong>108 m²</strong>.`,
+    'q2': `❌ Volume = surface × hauteur. Ici : 108 × 2,50 = <strong>270 m³</strong>.`,
+    'q4': `❌ Calculez d'abord le périmètre : 2×(12+9) = 42 m. Puis 42 × 2,50 = <strong>105 m²</strong>.`,
+    'q5': `❌ Calculez chaque type d'ouverture séparément puis additionnez. Résultat : <strong>15,09 m²</strong>.`,
+    'q6': `❌ Surface nette = surface brute (Q4) − surface ouvertures (Q5) = 105 − 15,09 = <strong>89,91 m²</strong>.`,
+    'q7': `❌ Le faîtage est au centre. Demi-largeur = 9 ÷ 2 = <strong>4,50 m</strong>.`,
+    'q8': `❌ Appliquez Pythagore : √(3,20² + 4,50²) = √(10,24 + 20,25) = √30,49 ≈ <strong>5,52 m</strong>.`,
+  };
+
+  if (ok) {
+    showFeedback(qid, true, msgs[qid] || '✅ Bonne réponse !');
+  } else {
+    showFeedback(qid, false, wrongs[qid] || `❌ La réponse attendue est <strong>${correct}</strong>.`);
+  }
+  updateBadge();
+}
+
+// ── QCM ──
+function selectOpt(qid, letter) {
+  if (state[qid] !== undefined) return; // déjà corrigé
+  qcmSelected[qid] = letter;
+  const opts = document.querySelectorAll('#opts-' + qid + ' .qcm-opt');
+  opts.forEach(o => o.classList.remove('selected'));
+  document.getElementById(qid + '-' + letter).classList.add('selected');
+}
+
+function checkQCM(qid, correct) {
+  const chosen = qcmSelected[qid];
+  if (!chosen) {
+    showFeedback(qid, false, '⚠️ Sélectionnez une réponse avant de valider.');
+    return;
+  }
+  const ok = chosen === correct;
+  state[qid] = ok;
+  document.getElementById('btn-' + qid).disabled = true;
+  document.getElementById('card-' + qid).classList.add(ok ? 'correct' : 'wrong');
+
+  const opts = document.querySelectorAll('#opts-' + qid + ' .qcm-opt');
+  opts.forEach(o => {
+    o.classList.add('locked');
+    const letter = o.id.split('-')[1];
+    if (letter === correct) o.classList.add('opt-correct');
+    else if (letter === chosen && !ok) o.classList.add('opt-wrong');
+  });
+
+  const explanations = {
+    'q3': {
+      ok: `✅ Correct ! Surface totale = 108 + 33 = 141 m². Avec 10 % : 155,1 m². Nb carreaux = 155,1 / 0,36 = 431.`,
+      ko: `❌ La bonne réponse est C. Il fallait inclure le garage (33 m²), ajouter 10 % de chutes, puis diviser par la surface d'un carreau (0,36 m²).`
+    },
+    'q9': {
+      ok: `✅ Correct ! Pente = 3,20 / 4,50 × 100 ≈ 71,1 %. Attention à ne pas confondre avec l'angle en degrés (≈35°).`,
+      ko: `❌ La bonne réponse est D. Pente (%) = hauteur / demi-largeur × 100 = 3,20 / 4,50 × 100 ≈ 71,1 %.`
+    },
+    'q10': {
+      ok: `✅ Correct ! Surface = 2 × 12 × 5,52 ≈ 132,5 m². Il faut utiliser le rampant réel, pas la hauteur ni la projection.`,
+      ko: `❌ La bonne réponse est C. Surface totale = 2 versants × longueur maison × longueur rampant = 2 × 12 × 5,52 ≈ 132,5 m².`
+    }
+  };
+  const exp = explanations[qid];
+  showFeedback(qid, ok, ok ? exp.ok : exp.ko);
+  updateBadge();
+}
+
+function showFeedback(qid, ok, msg) {
+  const fb = document.getElementById('fb-' + qid);
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+  fb.innerHTML = msg;
+}
+
+// ── SCORE ──
+function showScore() {
+  const count = Object.values(state).filter(v => v === true).length;
+  const answered = Object.keys(state).length;
+  const card = document.getElementById('scoreCard');
+  card.classList.add('visible');
+  document.getElementById('scoreBig').textContent = count + ' / ' + TOTAL;
+
+  let msg = '';
+  if (count >= 9) msg = '🏆 Excellent travail de conducteur ! Toutes les quantités sont maîtrisées.';
+  else if (count >= 7) msg = '👷 Bon travail ! Quelques calculs à consolider avant de valider les commandes.';
+  else if (count >= 5) msg = '📐 Des bases présentes, mais plusieurs métrés à reprendre.';
+  else msg = '📚 Des difficultés identifiées — revoyez les formules de surface, volume et Pythagore.';
+  document.getElementById('scoreMsg').textContent = msg;
+
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>
+</body>
+</html>
